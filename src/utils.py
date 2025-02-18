@@ -37,7 +37,7 @@ def compute_features(X_train,
   
   X_unigram_train_raw = unigramVectorizer.fit_transform(X_train)
   X_unigram_test_raw = unigramVectorizer.transform(X_test)
-  unigramFeatures = unigramVectorizer.get_feature_names()
+  unigramFeatures = unigramVectorizer.get_feature_names_out()
   return unigramFeatures, X_unigram_train_raw, X_unigram_test_raw
     
 
