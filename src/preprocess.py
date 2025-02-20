@@ -2,7 +2,7 @@ import nltk
 import spacy
 import re
 
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize
 
 
 
@@ -20,7 +20,7 @@ def sentence_splitting(text):
 
     if not isinstance(text, str):
         return text
-    sentences = nltk.tokenize.sent_tokenize(text)  # Uses Punkt by default
+    sentences = sent_tokenize(text)  # Uses Punkt by default
     return sentences
 
 def remove_stopwords():
