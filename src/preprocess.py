@@ -9,9 +9,8 @@ from nltk.stem import WordNetLemmatizer
 from nltk.stem.porter import PorterStemmer
 
 
-
-#TODO: Experiment with different tokenizers
-
+#Download just in case
+nltk.download("punkt")
 nltk.download("stopwords")
 nltk.download("wordnet")
 
@@ -19,12 +18,13 @@ nltk.download("wordnet")
 def remove_urls(text):
     # Matches HTTP(S) and WWW URLs
     url_pattern = r"https?://[a-zA-Z0-9.-]+(?:/[^\s]*)?|www\.[a-zA-Z0-9.-]+(?:/[^\s]*)?"
-    return re.sub(url_pattern, '', text)
+    return re.sub(url_pattern, "", text)
+
+def remove_numbers_and_symbols(text):
+    sym_pattern = re.sub(r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|]", "", text)
+    return re.sub(sym_pattern, "", text)
 
 def sentence_splitting(text):
-    # Just in case of not having it
-    nltk.download("punkt")
-
     if not isinstance(text, str):
         return text
     sentences = sent_tokenize(text)  # Uses Punkt by default
@@ -41,7 +41,6 @@ def perform_lemmatization(tokens):
 def perform_stemming(tokens):
     stemmer = PorterStemmer()
     return [stemmer.stem(token) for token in tokens]
-    pass
 
 def preprocess(sentence, labels, **kwargs):
     """
@@ -52,16 +51,30 @@ def preprocess(sentence, labels, **kwargs):
     Input: Sentence in string format
     Output: Preprocessed sentence either as a list or a string
     """
-    do_stopwords = kwargs.get('remove_stopwords', False)
-    do_lemmatize = kwargs.get('do_lemmatize', False)
-    do_stemming = kwargs.get('do_stemmin', False)
+    
+    # Parse boolean action activation parameters for experimentation
+    rm_urls = kwargs.get("remove_urls", True)
+    rm_sim = kwargs.get("remove_symbols", True)
+    split_sntcs = kwargs.get("split_sentences", True)
+    tokenize = kwargs.get("tokenize", True)
+    lower = kwargs.get("lower", True)
+    remove_stopwords = kwargs.get('remove_stopwords', False)
+    lemmatize = kwargs.get('lemmatize', False)
+    stemmatize = kwargs.get('stemmatize', False)
     stopword_lang = kwargs.get('stopword_lang', "english")
+    #tokenizer = kwargs.get("tokenizer")    
 
-    # Step 1: Perform URL Regex removal
-    _sentence = sentence.apply(remove_urls)
+    # Step 1: Perform URL Regex matching removal
+    if rm_urls:
+        _sentence = sentence.apply(remove_urls)
+    
+    # Step 2: Perform Number Regex matching removal
+    if rm_sim:
+        _sentence = _sentence.apply(remove_numbers_and_symbols)
 
-    # Step 2: Perform sentence splitting (punkt)
-    _sentence = _sentence.apply(sentence_splitting)
+    # Step 3: Perform sentence splitting (punkt)
+    if split_sntcs:
+        _sentence = _sentence.apply(sentence_splitting)
 
     new_sentences = []
     new_labels = []
@@ -78,24 +91,27 @@ def preprocess(sentence, labels, **kwargs):
     _sentence = pd.Series(new_sentences)
     _labels = new_labels
 
-    # Step 3: Perform tokenization (word)
-    _sentence = _sentence.apply(word_tokenize)
+    # Step 4: Perform tokenization (word)
+    #TODO: Experiment with different tokenizers
+    if tokenize:
+        _sentence = _sentence.apply(word_tokenize)
 
-    # Step 4: Remove capitalization
-    _sentence = _sentence.str.lower()
+    # Step 5: Remove capitalization
+    if lower:
+        _sentence = _sentence.str.lower()
 
-    # Step 5: Lematisation (optional)
-    # if do_stopwords:
-    #     _sentence = _sentence.apply(remove_stopwords)
     # TODO BROKEN: somehow needs to parse language into stopword function
-    # Still tho, I don't really see a need to remove stopwords for langdetect?
+    # Step 6: Stopword removal (optional and not recommendable)
+    if remove_stopwords:
+        _sentence = _sentence.apply(lambda x: remove_stopwords(x, stopword_lang))
+    
 
-    # Step 6: Lematisation (optional)
-    if do_lemmatize:
+    # Step 7: Lematization (optional)
+    if lemmatize:
         _sentence = _sentence.apply(perform_lemmatization)
 
-    # Step 7: Stemming (optional)
-    if do_stemming:
+    # Step 8: Stemming (optional)
+    if stemmatize:
         _sentence = _sentence.apply(perform_stemming)
 
     return _sentence, _labels

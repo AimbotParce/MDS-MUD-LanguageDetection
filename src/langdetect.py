@@ -13,12 +13,21 @@ random.seed(seed)
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", 
-                        help="Input data in csv format", type=str)
+                        help="Input data in csv format", type=str, 
+                        default="../data/dataset.csv")
     parser.add_argument("-v", "--voc_size", 
-                        help="Vocabulary size", type=int)
+                        help="Vocabulary size", type=int,
+                        default="2000")
     parser.add_argument("-a", "--analyzer",
-                         help="Tokenization level: {word, char}", 
-                        type=str, choices=['word','char'])
+                        help="Tokenization level: {word, char}", 
+                        type=str, choices=['word','char'],
+                        default="word")
+    parser.add_argument("-m", "--model", help="Kind of model to use",
+                        type=str, default="nb",
+                        choices=["nb", "lr",
+                                 "svm", "dt", "rf",
+                                 "lda", "mlp","knn"
+                                 "all",])
     return parser
 
 
@@ -61,9 +70,23 @@ if __name__ == "__main__":
     print('========')
 
 
-    #Apply Classifier  
+    #Normalize Data
     X_train, X_test = normalizeData(X_train_raw, X_test_raw)
-    y_predict = applyNaiveBayes(X_train, y_train, X_test)
+    
+    #Apply classification algorithms
+    classifier_algorithm = {
+        "nb": applyNaiveBayes,
+        "lr": applyLogisticRegression,
+        "svm": applySVM,
+        "dt": applyDecisionTree,
+        "rf": applyRandomForest,
+        "lda": applyLDA,
+        "mlp": applyMLP,
+        "knn": applyKNN,
+        "all": exit #TODO: This will explode, all behaviour needs to be implemented
+    }
+    
+    y_predict = classifier_algorithm[args.model](X_train, y_train, X_test)
     
     print('========')
     print('Prediction Results:')    
