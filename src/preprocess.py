@@ -4,8 +4,6 @@ import re
 
 from nltk.tokenize import word_tokenize
 
-# Just in case of not having it
-nltk.download("punkt")
 
 
 #TODO: Experiment with different tokenizers
@@ -16,14 +14,20 @@ def remove_urls(text):
     url_pattern = r"https?://[a-zA-Z0-9.-]+(?:/[^\s]*)?|www\.[a-zA-Z0-9.-]+(?:/[^\s]*)?"
     return re.sub(url_pattern, '', text)
 
-def sentence_splitting():
-    pass
+def sentence_splitting(text):
+    # Just in case of not having it
+    nltk.download("punkt")
+
+    if not isinstance(text, str):
+        return text
+    sentences = nltk.tokenize.sent_tokenize(text)  # Uses Punkt by default
+    return sentences
 
 def remove_stopwords():
     pass
 
 # Rule based suffix removal
-def perform_lemmatization():
+def perform_lemmatisation():  # british spelling
     pass
 
 # Dictionary linguistical database 
@@ -40,20 +44,20 @@ def preprocess(sentence, labels):
     Output: Preprocessed sentence either as a list or a string
     '''
     # Step 1: Perform URL Regex removal
-    # Not needed probably
-    sentence = sentence.apply(remove_urls)  
+    # Not needed probably --  Dani: I think we should remove URLs
+    _sentence = sentence.apply(remove_urls)
     
     # Step 2: Perform tokenization
-    sentence = sentence.apply(word_tokenize)
+    _sentence = _sentence.apply(word_tokenize)
 
     # Step 3: Remove capitalization
-    sentence = sentence.str.lower()
+    _sentence = _sentence.str.lower()
 
 
     # Place your code here
     # Keep in mind that sentence splitting affectes the number of sentences
     # and therefore, you should replicate labels to match.
-    return sentence,labels
+    return _sentence,labels
 
 
 
