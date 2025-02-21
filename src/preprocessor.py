@@ -80,7 +80,7 @@ class Preprocessor(object):
             x = map(self.remove_numbers_and_symbols, x)
 
         if self._split_sentences:  # Step 3: Perform sentence splitting (punkt)
-            _x = map(self.split_sentences, x)
+            _x = map(sent_tokenize, x) # Uses Punkt by default # TODO: Sentence tokenize is language-dependent!!!!!
             x, y = self._flatten_sentences(_x, y)
 
         if self._lower:  # Step 5: Remove capitalization
@@ -124,10 +124,6 @@ class Preprocessor(object):
     def remove_numbers_and_symbols(text: str) -> str:
         return re.sub(Preprocessor.SYMBOLS_PATTERN, "", text)
 
-    @staticmethod
-    def split_sentences(text: str) -> list[str]:
-        sentences = sent_tokenize(text)  # Uses Punkt by default
-        return sentences
 
     def remove_stop_words(self, tokens: Iterable[str]) -> list[str]:
         return list(filter(lambda token: token not in self.stop_words, tokens))
