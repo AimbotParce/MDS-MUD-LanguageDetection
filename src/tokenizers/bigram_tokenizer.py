@@ -12,7 +12,7 @@ class BigramTokenizer(Tokenizer):
         pass
 
     def transform(self, data: Iterable[str]) -> List[List[str]]:
-        return [list(zip(sentence.split(), sentence.split()[1:])) for sentence in data]
+        return [list(zip(sentence, sentence[1:])) for sentence in data]
 
     def fit_transform(self, data: Iterable[str]) -> List[List[str]]:
         return self.transform(data)
