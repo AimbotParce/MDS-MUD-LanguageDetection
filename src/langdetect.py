@@ -30,7 +30,7 @@ def get_parser():
     parser.add_argument("-c", "--classifier", help="Kind of classifier to use",
                         choices=classifiers.options, default="nb")
     parser.add_argument("--vectorizer", help="Kind of vectorizer to use",
-                        choices=vectorizers.options, default="unigram-count")
+                        choices=vectorizers.options, default="token-count")
     return parser
 
 

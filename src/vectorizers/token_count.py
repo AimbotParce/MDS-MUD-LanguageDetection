@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 from . import Vectorizer
 
 
-class CountVectorizer(Vectorizer):
+class TokenCountVectorizer(Vectorizer):
     "Counts the number of occurrences of each token in the vocabulary"
 
     def __init__(self, max_features: Optional[int] = None):
