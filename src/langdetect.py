@@ -43,6 +43,15 @@ if __name__ == "__main__":
     VECTORIZER:str = args.vectorizer
     CLASSIFIER:str = args.classifier
 
+    print('========')
+    print('Parameters:')
+    print('Input:', INPUT)
+    print('Vocabulary size:', VOC_SIZE)
+    print('Tokenizer:', TOKENIZER)
+    print('Vectorizer:', VECTORIZER)
+    print('Classifier:', CLASSIFIER)
+    print('========')
+
     raw = pd.read_csv(INPUT)
     
     # Languages

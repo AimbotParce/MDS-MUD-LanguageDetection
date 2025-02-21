@@ -10,10 +10,14 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 # Download just in case
 nltk.download("stopwords")
 nltk.download("punkt")
+nltk.download("punkt_tab")
 nltk.download("wordnet")
 
 
 class Preprocessor(object):
+    SYMBOLS_PATTERN = r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|]"
+    URLS_PATTERN = r"https?://[a-zA-Z0-9.-]+(?:/[^\s]*)?|www\.[a-zA-Z0-9.-]+(?:/[^\s]*)?"
+
     def __init__(
         self,
         remove_urls: bool = False,
@@ -114,13 +118,11 @@ class Preprocessor(object):
     @staticmethod
     def remove_urls(text: str) -> str:
         # Matches HTTP(S) and WWW URLs
-        url_pattern = r"https?://[a-zA-Z0-9.-]+(?:/[^\s]*)?|www\.[a-zA-Z0-9.-]+(?:/[^\s]*)?"
-        return re.sub(url_pattern, "", text)
+        return re.sub(Preprocessor.URLS_PATTERN, "", text)
 
     @staticmethod
     def remove_numbers_and_symbols(text: str) -> str:
-        sym_pattern = re.sub(r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|]", "", text)
-        return re.sub(sym_pattern, "", text)
+        return re.sub(Preprocessor.SYMBOLS_PATTERN, "", text)
 
     @staticmethod
     def split_sentences(text: str) -> list[str]:
