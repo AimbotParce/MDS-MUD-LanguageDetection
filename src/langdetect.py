@@ -26,7 +26,7 @@ def get_parser():
                         help="Vocabulary size", type=int,
                         default=2000)
     parser.add_argument("-t", "--tokenizer", help="Kind of tokenizer to use",
-                        choices=tokenizers.options, default="word")
+                        choices=tokenizers.options, default="char")
     parser.add_argument("-c", "--classifier", help="Kind of classifier to use",
                         choices=classifiers.options, default="nb")
     parser.add_argument("--vectorizer", help="Kind of vectorizer to use",
