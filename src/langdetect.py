@@ -94,8 +94,8 @@ if __name__ == "__main__":
     start = time.time()
     print('Computing text features...', end=' ', flush=True)
     vectorizer = vectorizers.getVectorizer(VECTORIZER, max_features=VOC_SIZE)
-    X_train_vec = vectorizer.fit_transform(X_train)
-    X_test_vec = vectorizer.transform(X_test)
+    X_train_vec = vectorizer.fit_transform(X_train_tok)
+    X_test_vec = vectorizer.transform(X_train_tok)
     vocab = vectorizer.get_vocab()
     print(f'Done! ({time.time()-start:.1f}s)', flush=True)
 
