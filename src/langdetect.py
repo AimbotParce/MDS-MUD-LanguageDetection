@@ -95,7 +95,7 @@ if __name__ == "__main__":
     print('Computing text features...', end=' ', flush=True)
     vectorizer = vectorizers.getVectorizer(VECTORIZER, max_features=VOC_SIZE)
     X_train_vec = vectorizer.fit_transform(X_train_tok)
-    X_test_vec = vectorizer.transform(X_train_tok)
+    X_test_vec = vectorizer.transform(X_test_tok)
     vocab = vectorizer.get_vocab()
     print(f'Done! ({time.time()-start:.1f}s)', flush=True)
 
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     y_predict = classifier.predict(X_test)
     print(f'Done! ({time.time()-start:.1f}s)', flush=True)
     
-    print('Prediction Results:')    
+    print('Prediction Results:')
     plot_F_Scores(y_test, y_predict)
     print('========')
     
@@ -129,5 +129,5 @@ if __name__ == "__main__":
 
     #Plot PCA
     print('PCA and Explained Variance:') 
-    plotPCA(X_train, X_test,y_test, languages) 
+    plotPCA(X_train, X_test, y_test, languages) 
     print('========')
