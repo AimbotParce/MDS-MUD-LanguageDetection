@@ -26,12 +26,12 @@ class Vectorizer(ABC):
     def get_vocab(self) -> List[str]:
         pass
 
-from .unigram_count import UnigramCountVectorizer
+from .token_count import TokenCountVectorizer
 
-__all__ = ["UnigramCountVectorizer"]
+__all__ = ["CountVectorizer"]
 
 _MAP = {
-    "unigram-count": UnigramCountVectorizer
+    "token-count": TokenCountVectorizer
 }
 
 options = list(_MAP.keys())

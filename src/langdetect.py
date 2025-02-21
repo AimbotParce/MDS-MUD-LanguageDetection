@@ -30,7 +30,7 @@ def get_parser():
     parser.add_argument("-c", "--classifier", help="Kind of classifier to use",
                         choices=classifiers.options, default="nb")
     parser.add_argument("--vectorizer", help="Kind of vectorizer to use",
-                        choices=vectorizers.options, default="unigram-count")
+                        choices=vectorizers.options, default="token-count")
     return parser
 
 
@@ -100,6 +100,7 @@ if __name__ == "__main__":
     print(f'Done! ({time.time()-start:.1f}s)', flush=True)
 
     print('Number of tokens in the vocabulary:', len(vocab))
+    print('Vocabulary:', ', '.join(vocab[:10]), '...')
     print('Coverage: ', compute_coverage(vocab, X_test_tok))
     print('========')
 

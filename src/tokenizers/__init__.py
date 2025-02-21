@@ -22,14 +22,16 @@ class Tokenizer(ABC):
     def fit_transform(self, data: Iterable[str]) -> List[List[str]]:
         pass
 
+from .bigram_tokenizer import BigramTokenizer
 from .char_tokenizer import CharTokenizer
 from .word_tokenizer import WordTokenizer
 
-__all__ = ["WordTokenizer", "CharTokenizer"]
+__all__ = ["WordTokenizer", "CharTokenizer", "BigramTokenizer"]
 
 _MAP = {
     "word": WordTokenizer,
-    "char": CharTokenizer
+    "char": CharTokenizer,
+    "bigram": BigramTokenizer
 }
 
 options = list(_MAP.keys())

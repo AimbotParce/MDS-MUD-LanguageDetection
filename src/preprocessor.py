@@ -8,10 +8,10 @@ from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 
 # Download just in case
-nltk.download("stopwords")
-nltk.download("punkt")
-nltk.download("punkt_tab")
-nltk.download("wordnet")
+nltk.download("stopwords", quiet=True)
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+nltk.download("wordnet", quiet=True)
 
 
 class Preprocessor(object):
