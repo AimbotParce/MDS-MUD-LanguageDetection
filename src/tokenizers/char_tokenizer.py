@@ -12,7 +12,7 @@ class CharTokenizer(Tokenizer):
         pass
 
     def transform(self, data: Iterable[str]) -> List[List[str]]:
-        return list(map(list, data))
+        return list(map(tuple, data))
 
     def fit_transform(self, data: Iterable[str]) -> List[List[str]]:
         return self.transform(data)
