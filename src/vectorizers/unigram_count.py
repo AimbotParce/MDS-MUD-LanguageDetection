@@ -21,3 +21,6 @@ class UnigramCountVectorizer(Vectorizer):
 
     def fit_transform(self, data: Iterable[List[str]]) -> List[NDArray[np.float32]]:
         return self.vectorizer.fit_transform(data)
+    
+    def get_vocab(self) -> List[str]:
+        return self.vectorizer.get_feature_names_out()

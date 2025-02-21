@@ -26,13 +26,6 @@ class Vectorizer(ABC):
     def get_vocab(self) -> List[str]:
         pass
 
-    @abstractmethod
-    def compute_coverage(self, data: Iterable[str]) -> float:
-        pass
-
-
-    
-
 from .unigram_count import UnigramCountVectorizer
 
 __all__ = ["UnigramCountVectorizer"]
@@ -48,5 +41,3 @@ def getVectorizer(name: str, max_features:Optional[int] = None) -> Vectorizer:
         return _MAP[name.lower()](max_features)
     else:
         raise ValueError(f"Invalid vectorizer name: {name}")
-    
-
