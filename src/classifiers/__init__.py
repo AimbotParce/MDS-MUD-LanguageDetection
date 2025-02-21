@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 import numpy as np
 from numpy.typing import NDArray
@@ -37,23 +38,21 @@ __all__ = [
     "SVMClassifier",
 ]
 
+_MAP = {
+    "dt": DecisionTreeClassifier,
+    "knn": KNNClassifier,
+    "lda": LDAClassifier,
+    "lr": LogisticRegressionClassifier,
+    "mlp": MLPClassifier,
+    "nb": NaiveBayesClassifier,
+    "rf": RandomForestClassifier,
+    "svm": SVMClassifier,
+}
+
+options = list(_MAP.keys())
 
 def getClassifier(name: str) -> Classifier:
-    if name == "DecisionTree":
-        return DecisionTreeClassifier()
-    elif name == "KNN":
-        return KNNClassifier()
-    elif name == "LDA":
-        return LDAClassifier()
-    elif name == "LogisticRegression":
-        return LogisticRegressionClassifier()
-    elif name == "MLP":
-        return MLPClassifier()
-    elif name == "NaiveBayes":
-        return NaiveBayesClassifier()
-    elif name == "RandomForest":
-        return RandomForestClassifier()
-    elif name == "SVM":
-        return SVMClassifier()
+    if name.lower() in _MAP:
+        return _MAP[name.lower()]()
     else:
         raise ValueError(f"Invalid classifier name: {name}")

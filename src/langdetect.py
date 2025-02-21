@@ -25,11 +25,11 @@ def get_parser():
                         help="Vocabulary size", type=int,
                         default=2000)
     parser.add_argument("-t", "--tokenizer", help="Kind of tokenizer to use",
-                        choices=tokenizers.__all__, default="WordTokenizer")
+                        choices=tokenizers.options, default="word")
     parser.add_argument("-c", "--classifier", help="Kind of classifier to use",
-                        choices=classifiers.__all__, default="NaiveBayesClassifier")
+                        choices=classifiers.options, default="nb")
     parser.add_argument("--vectorizer", help="Kind of vectorizer to use",
-                        choices=vectorizers.__all__, default="UnigramCountVectorizer")
+                        choices=vectorizers.options, default="unigram-count")
     return parser
 
 

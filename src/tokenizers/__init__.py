@@ -27,11 +27,15 @@ from .word_tokenizer import WordTokenizer
 
 __all__ = ["WordTokenizer", "CharTokenizer"]
 
+_MAP = {
+    "word": WordTokenizer,
+    "char": CharTokenizer
+}
+
+options = list(_MAP.keys())
+
 def getTokenizer(name: str) -> Tokenizer:
-    if name == "Word":
-        return WordTokenizer()
-    elif name == "Char":
-        return CharTokenizer()
+    if name.lower() in _MAP: 
+        return _MAP[name.lower()]()
     else:
         raise ValueError(f"Invalid tokenizer name: {name}")
-

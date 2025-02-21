@@ -37,11 +37,16 @@ from .unigram_count import UnigramCountVectorizer
 
 __all__ = ["UnigramCountVectorizer"]
 
+_MAP = {
+    "unigram-count": UnigramCountVectorizer
+}
+
+options = list(_MAP.keys())
+
 def getVectorizer(name: str, max_features:Optional[int] = None) -> Vectorizer:
-    if name == "UnigramCount":
-        return UnigramCountVectorizer(max_features=max_features)
+    if name.lower() in _MAP:
+        return _MAP[name.lower()](max_features)
     else:
         raise ValueError(f"Invalid vectorizer name: {name}")
     
 
-    
