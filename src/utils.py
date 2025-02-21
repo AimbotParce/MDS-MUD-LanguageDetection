@@ -122,7 +122,7 @@ def plotPCA(x_train, x_test,y_test, langs):
     pca.fit(toNumpyArray(x_train))
     pca_test = pca.transform(toNumpyArray(x_test))
     print('Variance explained by PCA:', pca.explained_variance_ratio_)
-    y_test_list = np.asarray(y_test.tolist())
+    y_test_list = np.asarray(y_test)
     for lang in langs:
         pca_x = np.asarray([i[0] for i in pca_test])[y_test_list == lang]
         pca_y = np.asarray([i[1] for i in pca_test])[y_test_list == lang]
