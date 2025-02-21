@@ -1,48 +1,17 @@
-from sklearn.preprocessing import normalize
-from sklearn.metrics import confusion_matrix, f1_score
-from sklearn.decomposition import PCA
-import seaborn as sn
+from typing import Iterable, List
+
 import matplotlib.pyplot as plt
-from matplotlib import pyplot as plt
-from sklearn.feature_extraction.text import CountVectorizer
-import scipy
 import numpy as np
 import pandas as pd
+import scipy
+import seaborn as sn
+from matplotlib import pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.metrics import confusion_matrix, f1_score
+from sklearn.preprocessing import normalize
 
 
-
-def compute_features(X_train, 
-                     X_test, 
-                     analyzer='char', 
-                     max_features=None):
-  '''
-  Task: Compute a matrix of token counts given a corpus. 
-        This matrix represents the frecuency any pair of tokens appears
-        together in a sentence.
- 
-  Input: X_train -> Train sentences
-         X_test -> Test sentences
-         analyzer -> Granularity used to process the sentence 
-                    Values: {word, char}
-         tokenizer -> Callable function to apply to the sentences before compute.
-  
-  Output: unigramFeatures: Cout matrix
-          X_unigram_train_raw: Features computed for the Train sentences
-          X_unigram_test_raw: Features computed for the Test sentences 
-  '''
-  
-  unigramVectorizer = CountVectorizer(analyzer=analyzer,
-                                      max_features=max_features,
-                                      ngram_range=(1,1))
-  
-  X_unigram_train_raw = unigramVectorizer.fit_transform(X_train)
-  X_unigram_test_raw = unigramVectorizer.transform(X_test)
-  unigramFeatures = unigramVectorizer.get_feature_names_out()
-  return unigramFeatures, X_unigram_train_raw, X_unigram_test_raw
-    
-
-
-def compute_coverage(features, split, analyzer='char'):
+def compute_coverage(vocab:List[str], tokenized:Iterable[List[str]]):
   '''
   Task: Compute the proportion of a corpus that is represented by
         the vocabulary. All non covered tokens will be considered as unknown
@@ -56,13 +25,12 @@ def compute_coverage(features, split, analyzer='char'):
   '''
   total = 0.0
   found = 0.0
-  for sent in split:
-    #The following may be affected by your preprocess function. Modify accordingly
-    sent = sent.split(' ') if analyzer == 'word' else list(sent)
-    total += len(sent)
-    for token in sent:
-      if token in features:
-        found += 1.0
+  vocab = set(vocab)
+  for tokens in tokenized:
+    total += len(tokens)
+    for token in tokens:
+        if token in vocab:
+            found += 1.0
   return found / total
 
 # Utils for conversion of different sources into numpy array
@@ -161,6 +129,8 @@ def plotPCA(x_train, x_test,y_test, langs):
         plt.scatter(pca_x,pca_y, label=lang)
     plt.legend(loc="upper left")
     plt.show()
+
+
 
 
 
