@@ -141,3 +141,19 @@ class Preprocessor(object):
     def stem(tokens: Iterable[str]) -> list[str]:
         stemmer = PorterStemmer()
         return list(map(stemmer.stem, tokens))
+    
+    
+if __name__ == "__main__":
+    # Benchmark
+    import timeit
+    from pathlib import Path
+
+    import pandas as pd
+
+    raw = pd.read_csv(Path(__file__).parent.parent / "data" / "dataset.csv")
+    preprocessor = Preprocessor(remove_urls=True, remove_symbols=True, split_sentences=True,
+                       lower=True, remove_stopwords=True, lemmatize=True, stemmatize=True)
+
+    ATTEMPTS = 8
+    time = timeit.timeit(lambda: preprocessor.apply(raw['Text'], raw['language']), number=ATTEMPTS)
+    print("Done in", time/ATTEMPTS, "seconds per execution on average.")
