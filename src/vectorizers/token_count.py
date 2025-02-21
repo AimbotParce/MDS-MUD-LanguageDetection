@@ -13,7 +13,7 @@ class TokenCountVectorizer(Vectorizer):
     def __init__(self, max_features: Optional[int] = None):
         super().__init__(max_features)
         self._token_counts: Dict[str, int] = defaultdict(int)
-        self._all_tokens: set[str] = {}
+        self._all_tokens: set[str] = set()
         self._vocab:list[str] = None
         self._vocab_index: Dict[str, int] = None
 
