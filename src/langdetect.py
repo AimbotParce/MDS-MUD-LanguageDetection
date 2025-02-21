@@ -1,5 +1,6 @@
 import argparse
 import random
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -52,40 +53,52 @@ if __name__ == "__main__":
     print('Classifier:', CLASSIFIER)
     print('========')
 
+    print('Reading data...', end=' ')
     raw = pd.read_csv(INPUT)
+    print('Done!')
     
     # Languages
     languages = set(raw['language'])
-    print('========')
     print('Languages', languages)
     print('========')
 
     # Split Train and Test sets
+    print('Splitting data...', end=' ')
     X_train, X_test, y_train, y_test = train_test_split(raw['Text'], raw['language'], test_size=0.2, random_state=seed)
+    print('Done!')
     
-    print('========')
     print('Split sizes:')
     print('Train:', len(X_train))
     print('Test:', len(X_test))
     print('========')
     
     # Preprocess text (Word granularity only)
+    start = time.time()
+    print('Preprocessing text...', end=' ', flush=True)
     preprocessor = Preprocessor(remove_urls=True, remove_symbols=True, split_sentences=False, 
                        lower=True, remove_stopwords=False, lemmatize=False, stemmatize=False)
     X_train_pre, y_train = preprocessor.apply(X_train, y_train)
     X_test_pre, y_test = preprocessor.apply(X_test,y_test)
+    print(f'Done! ({time.time()-start:.1f}s)', flush=True)
 
+    
+    #Tokenize text
+    start = time.time()
+    print('Tokenizing text...', end=' ', flush=True)    
     tokenizer = tokenizers.getTokenizer(TOKENIZER)
     X_train_tok = tokenizer.fit_transform(X_train_pre)
     X_test_tok = tokenizer.transform(X_test_pre)
+    print(f'Done! ({time.time()-start:.1f}s)', flush=True)
 
     #Compute text features
+    start = time.time()
+    print('Computing text features...', end=' ', flush=True)
     vectorizer = vectorizers.getVectorizer(VECTORIZER, max_features=VOC_SIZE)
     X_train_vec = vectorizer.fit_transform(X_train)
     X_test_vec = vectorizer.transform(X_test)
     vocab = vectorizer.get_vocab()
+    print(f'Done! ({time.time()-start:.1f}s)', flush=True)
 
-    print('========')
     print('Number of tokens in the vocabulary:', len(vocab))
     print('Coverage: ', compute_coverage(vocab, X_test_tok))
     print('========')
@@ -94,11 +107,18 @@ if __name__ == "__main__":
     X_train, X_test = normalizeData(X_train_vec, X_test_vec)
     
     #Apply classification algorithms
+    start = time.time()
+    print('Fitting classifier...', end=' ', flush=True)
     classifier = classifiers.getClassifier(CLASSIFIER)
     classifier.fit(X_train, y_train)
+    print(f'Done! ({time.time()-start:.1f}s)', flush=True)
+
+    #Predict
+    start = time.time()
+    print('Predicting...', end=' ', flush=True)
     y_predict = classifier.predict(X_test)
+    print(f'Done! ({time.time()-start:.1f}s)', flush=True)
     
-    print('========')
     print('Prediction Results:')    
     plot_F_Scores(y_test, y_predict)
     print('========')
@@ -107,10 +127,6 @@ if __name__ == "__main__":
 
 
     #Plot PCA
-    print('========')
     print('PCA and Explained Variance:') 
     plotPCA(X_train, X_test,y_test, languages) 
-    print('========')
-    print('========')
-    print('========')
     print('========')
