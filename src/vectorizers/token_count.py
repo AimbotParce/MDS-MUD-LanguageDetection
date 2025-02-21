@@ -21,7 +21,7 @@ class TokenCountVectorizer(Vectorizer):
             for token in sentence:
                 self._token_counts[token] = 1
                 self._all_tokens.add(token)
-        self._vocab = sorted(self._all_tokens, key=lambda x: self._token_counts[x], reverse=True)[: self.max_features]
+        self._vocab = sorted(self._all_tokens, key=lambda x: self._token_counts[x], reverse=True)[self.max_features:]
 
     def transform(self, data: Iterable[List[str]]) -> List[NDArray[np.float32]]:
         if self._vocab is None:
