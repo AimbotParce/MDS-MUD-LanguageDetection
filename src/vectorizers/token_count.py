@@ -15,7 +15,6 @@ class TokenCountVectorizer(Vectorizer):
         self._token_counts: Dict[str, int] = defaultdict(int)
         self._all_tokens: set[str] = set()
         self._vocab:list[str] = None
-        self._vocab_index: Dict[str, int] = None
 
     def fit(self, data: Iterable[List[str]]) -> None:
         for sentence in data:
@@ -23,7 +22,6 @@ class TokenCountVectorizer(Vectorizer):
                 self._token_counts[token] = 1
                 self._all_tokens.add(token)
         self._vocab = sorted(self._all_tokens, key=lambda x: self._token_counts[x], reverse=True)[: self.max_features]
-        self._vocab_index = {token: i for i, token in enumerate(self._vocab)}
 
     def transform(self, data: Iterable[List[str]]) -> List[NDArray[np.float32]]:
         if self._vocab is None:

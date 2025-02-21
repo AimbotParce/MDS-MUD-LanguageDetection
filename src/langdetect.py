@@ -100,6 +100,7 @@ if __name__ == "__main__":
     print(f'Done! ({time.time()-start:.1f}s)', flush=True)
 
     print('Number of tokens in the vocabulary:', len(vocab))
+    print('Vocabulary:', ', '.join(vocab[:10]), '...')
     print('Coverage: ', compute_coverage(vocab, X_test_tok))
     print('========')
 
