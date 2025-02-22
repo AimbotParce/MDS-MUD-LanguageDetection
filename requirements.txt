@@ -5,4 +5,3 @@ seaborn
 matplotlib
 scipy
 nltk
-tqdm
