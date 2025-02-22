@@ -2,16 +2,18 @@ import argparse
 import random
 import time
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
+from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
 import classifiers
 import preprocessor
 import tokenizers
 import vectorizers
-from utils import (compute_coverage, normalizeData, plot_Confusion_Matrix,
-                   plot_F_Scores, plotPCA)
+from utils import (compute_coverage, computePCA, normalizeData,
+                   plot_Confusion_Matrix, plotPCA)
 
 seed = 42
 random.seed(seed)
@@ -20,6 +22,7 @@ random.seed(seed)
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--hide-plots", help="Hide plots", action="store_true")
+    parser.add_argument("--report-results", help="Path to report the results to", type=Path, default=None)
     parser.add_argument("-i", "--input", 
                         help="Input data in csv format", type=Path, 
                         default=Path(__file__).parent.parent / "data" / "dataset.csv")
@@ -32,12 +35,22 @@ def get_parser():
                         choices=classifiers.options, default="nb")
     parser.add_argument("--vectorizer", help="Kind of vectorizer to use",
                         choices=vectorizers.options, default="token-count")
+    
+    # Preprocessing options
+    parser.add_argument("--remove-urls", help="Remove URLs", action="store_true")
+    parser.add_argument("--remove-symbols", help="Remove Symbols", action="store_true")
+    parser.add_argument("--split-sentences", help="Split Sentences", action="store_true")
+    parser.add_argument("--lower", help="Lowercase", action="store_true")
+    parser.add_argument("--remove-stopwords", help="Remove Stopwords", action="store_true")
+    parser.add_argument("--lemmatize", help="Lemmatize", action="store_true")
+    parser.add_argument("--stemmatize", help="Stemmatize", action="store_true")
     return parser
 
 
 if __name__ == "__main__":
+    import time
+    start = time.time()
     parser = get_parser()
-    preprocessor.add_preprocessor_args(parser)
     args = parser.parse_args()
 
     INPUT:Path = args.input
@@ -46,6 +59,17 @@ if __name__ == "__main__":
     VECTORIZER:str = args.vectorizer
     CLASSIFIER:str = args.classifier
     HIDE_PLOTS:bool = args.hide_plots
+    REPORT_RESULTS:Optional[Path] = args.report_results
+
+    # Preprocessing options
+    REMOVE_URLS:bool = args.remove_urls
+    REMOVE_SYMBOLS:bool = args.remove_symbols
+    SPLIT_SENTENCES:bool = args.split_sentences
+    LOWER:bool = args.lower
+    REMOVE_STOPWORDS:bool = args.remove_stopwords
+    LEMMATIZE:bool = args.lemmatize
+    STEMMATIZE:bool = args.stemmatize
+
 
     print('========')
     print('Parameters:')
@@ -54,6 +78,15 @@ if __name__ == "__main__":
     print('Tokenizer:', TOKENIZER)
     print('Vectorizer:', VECTORIZER)
     print('Classifier:', CLASSIFIER)
+
+    print('Preprocessing options:')
+    print('Remove URLs:', REMOVE_URLS)
+    print('Remove Symbols:', REMOVE_SYMBOLS)
+    print('Split Sentences:', SPLIT_SENTENCES)
+    print('Lowercase:', LOWER)
+    print('Remove Stopwords:', REMOVE_STOPWORDS)
+    print('Lemmatize:', LEMMATIZE)
+    print('Stemmatize:', STEMMATIZE)
     print('========')
 
     print('Reading data...', end=' ')
@@ -78,8 +111,8 @@ if __name__ == "__main__":
     # Preprocess text (Word granularity only)
     start = time.time()
     print('Preprocessing text...', end=' ', flush=True)
-    preprocessor = preprocessor.Preprocessor(remove_urls=True, remove_symbols=True, split_sentences=False, 
-                       lower=True, remove_stopwords=False, lemmatize=False, stemmatize=False)
+    preprocessor = preprocessor.Preprocessor(remove_urls=REMOVE_URLS, remove_symbols=REMOVE_SYMBOLS, split_sentences=SPLIT_SENTENCES,
+                                             lower=LOWER, remove_stopwords=REMOVE_STOPWORDS, lemmatize=LEMMATIZE, stemmatize=STEMMATIZE)
     X_train_pre, y_train = preprocessor.apply(X_train, y_train)
     X_test_pre, y_test = preprocessor.apply(X_test,y_test)
     print(f'Done! ({time.time()-start:.1f}s)', flush=True)
@@ -104,7 +137,9 @@ if __name__ == "__main__":
 
     print('Number of tokens in the vocabulary:', len(vocab))
     print('Vocabulary:', ', '.join(vocab[:10]), '...')
-    print('Coverage: ', compute_coverage(vocab, X_test_tok))
+    test_coverage = compute_coverage(vocab, X_test_tok)
+    train_coverage = compute_coverage(vocab, X_train_tok)
+    print(f'Coverage on train: {train_coverage*100:.2f}% and test: {test_coverage*100:.2f}%')
     print('========')
 
     #Normalize Data
@@ -124,13 +159,28 @@ if __name__ == "__main__":
     print(f'Done! ({time.time()-start:.1f}s)', flush=True)
     
     print('Prediction Results:')
-    plot_F_Scores(y_test, y_predict)
+    f1_micro = f1_score(y_test, y_predict, average='micro')
+    f1_macro = f1_score(y_test, y_predict, average='macro')
+    f1_weighted = f1_score(y_test, y_predict, average='weighted')
+    print("F1: {} (micro), {} (macro), {} (weighted)".format(f1_micro, f1_macro, f1_weighted))
+
+    pca = computePCA(X_train)
+    print('Variance explained by PCA:', pca.explained_variance_ratio_)
     print('========')
+
+    if REPORT_RESULTS is not None:
+        print('Writing results to', REPORT_RESULTS)
+        with open(REPORT_RESULTS, 'a') as f:
+            f.write(f'"{INPUT}",{VOC_SIZE},"{TOKENIZER}","{VECTORIZER}","{CLASSIFIER}",{REMOVE_URLS},{REMOVE_SYMBOLS},'
+                    f'{SPLIT_SENTENCES},{LOWER},{REMOVE_STOPWORDS},{LEMMATIZE},{STEMMATIZE},{len(X_train)},'
+                    f'{len(X_test)},{len(vocab)},{train_coverage},{test_coverage},{float(f1_micro)},{float(f1_macro)},{float(f1_weighted)},'
+                    f'{float(pca.explained_variance_ratio_[0])},{time.time()-start}\n')
+
     if HIDE_PLOTS:
         print('Plots are hidden')
     else:        
         plot_Confusion_Matrix(y_test, y_predict, "Greens") 
 
         print('PCA and Explained Variance:') 
-        plotPCA(X_train, X_test, y_test, languages) 
+        plotPCA(pca, X_test, y_test, languages) 
         print('========')

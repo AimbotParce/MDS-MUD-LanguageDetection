@@ -120,17 +120,29 @@ if __name__ == "__main__":
     parser.add_argument("--max-workers", help="Maximum number of workers to use", type=int, default=1)
     parser.add_argument("--show-success", help="Show stdout of successful commands", action="store_true")
     parser.add_argument("--show-error", help="Show communications of failed commands", action="store_true")
+    parser.add_argument("--report-file", help="CSV file to report the results to", type=Path, default=None)
     args = parser.parse_args()
 
     python = Path(sys.executable).relative_to(Path(".").resolve())
     langdetect = Path(__file__).parent.relative_to(Path(".").resolve()) / "src" / "langdetect.py"
 
-    grid = GridSearch(f'"{python}" "{langdetect}" --hide-plots')
+    
+    if args.report_file:
+        with open(args.report_file, "w") as f:
+            f.write("dataset,max_voc_size,tokenizer,vectorizer,classifier,remove_urls,remove_symbols,split_sentences,lower,"
+                    "remove_stopwords,lemmatize,stemmatize,train_size,test_size,voc_size,train_coverage,test_coverage,"
+                    "f1_micro,f1_macro,f1_weighted,pca_explained_variance_ratio,duration\n")
+        cmd = f'"{python}" "{langdetect}" --report-results "{args.report_file}" --hide-plots'
+    else:
+        cmd = f'"{python}" "{langdetect}" --hide-plots'
+
+    grid = GridSearch(cmd)
     grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "split-sentences",
                                       "lower", "remove-stopwords", "lemmatize", "stemmatize"], iterate="permutations"))
     grid.add_dimension(KeyValueDimension("tokenizer", ["word", "char", "bigram"]))
     grid.add_dimension(KeyValueDimension("vectorizer", ["token-count"]))
     grid.add_dimension(KeyValueDimension("classifier", ["dt", "knn", "lda", "lr", "mlp", "nb", "rf", "svm"]))
+
 
     print("Total number of executions to run:", len(grid))
     with ProcessPoolExecutor(max_workers=args.max_workers) as executor:

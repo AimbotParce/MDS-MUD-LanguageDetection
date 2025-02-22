@@ -14,16 +14,6 @@ nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
 nltk.download("wordnet", quiet=True)
 
-
-def add_preprocessor_args(parser:ArgumentParser):
-    parser.add_argument("--remove-urls", help="Remove URLs", action="store_true")
-    parser.add_argument("--remove-symbols", help="Remove Symbols", action="store_true")
-    parser.add_argument("--split-sentences", help="Split Sentences", action="store_true")
-    parser.add_argument("--lower", help="Lowercase", action="store_true")
-    parser.add_argument("--remove-stopwords", help="Remove Stopwords", action="store_true")
-    parser.add_argument("--lemmatize", help="Lemmatize", action="store_true")
-    parser.add_argument("--stemmatize", help="Stemmatize", action="store_true")
-
 class Preprocessor(object):
     SYMBOLS_PATTERN = r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|]"
     URLS_PATTERN = r"https?://[a-zA-Z0-9.-]+(?:/[^\s]*)?|www\.[a-zA-Z0-9.-]+(?:/[^\s]*)?"
