@@ -7,9 +7,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 import classifiers
+import preprocessor
 import tokenizers
 import vectorizers
-from preprocessor import Preprocessor
 from utils import (compute_coverage, normalizeData, plot_Confusion_Matrix,
                    plot_F_Scores, plotPCA)
 
@@ -19,6 +19,7 @@ random.seed(seed)
 
 def get_parser():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--hide-plots", help="Hide plots", action="store_true")
     parser.add_argument("-i", "--input", 
                         help="Input data in csv format", type=Path, 
                         default=Path(__file__).parent.parent / "data" / "dataset.csv")
@@ -36,6 +37,7 @@ def get_parser():
 
 if __name__ == "__main__":
     parser = get_parser()
+    preprocessor.add_preprocessor_args(parser)
     args = parser.parse_args()
 
     INPUT:Path = args.input
@@ -43,6 +45,7 @@ if __name__ == "__main__":
     TOKENIZER:str = args.tokenizer
     VECTORIZER:str = args.vectorizer
     CLASSIFIER:str = args.classifier
+    HIDE_PLOTS:bool = args.hide_plots
 
     print('========')
     print('Parameters:')
@@ -75,7 +78,7 @@ if __name__ == "__main__":
     # Preprocess text (Word granularity only)
     start = time.time()
     print('Preprocessing text...', end=' ', flush=True)
-    preprocessor = Preprocessor(remove_urls=True, remove_symbols=True, split_sentences=False, 
+    preprocessor = preprocessor.Preprocessor(remove_urls=True, remove_symbols=True, split_sentences=False, 
                        lower=True, remove_stopwords=False, lemmatize=False, stemmatize=False)
     X_train_pre, y_train = preprocessor.apply(X_train, y_train)
     X_test_pre, y_test = preprocessor.apply(X_test,y_test)
@@ -123,11 +126,11 @@ if __name__ == "__main__":
     print('Prediction Results:')
     plot_F_Scores(y_test, y_predict)
     print('========')
-    
-    plot_Confusion_Matrix(y_test, y_predict, "Greens") 
+    if HIDE_PLOTS:
+        print('Plots are hidden')
+    else:        
+        plot_Confusion_Matrix(y_test, y_predict, "Greens") 
 
-
-    #Plot PCA
-    print('PCA and Explained Variance:') 
-    plotPCA(X_train, X_test, y_test, languages) 
-    print('========')
+        print('PCA and Explained Variance:') 
+        plotPCA(X_train, X_test, y_test, languages) 
+        print('========')
