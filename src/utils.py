@@ -6,6 +6,7 @@ import pandas as pd
 import scipy
 import seaborn as sn
 from matplotlib import pyplot as plt
+from numpy.typing import NDArray
 from sklearn.decomposition import PCA
 from sklearn.metrics import confusion_matrix, f1_score
 from sklearn.preprocessing import normalize
@@ -65,23 +66,7 @@ def normalizeData(train, test):
     test_result = normalize(test, norm='l2', axis=1, copy=True, return_norm=False)
     return train_result, test_result
 
-
-def plot_F_Scores(y_test, y_predict):
-    '''
-    Task: Compute the F1 score of a set of predictions given
-          its reference
-
-    Input: y_test: Reference labels 
-           y_predict: Predicted labels
-
-    Output: Print F1 score
-    '''
-    f1_micro = f1_score(y_test, y_predict, average='micro')
-    f1_macro = f1_score(y_test, y_predict, average='macro')
-    f1_weighted = f1_score(y_test, y_predict, average='weighted')
-    print("F1: {} (micro), {} (macro), {} (weighted)".format(f1_micro, f1_macro, f1_weighted))
-
-def plot_Confusion_Matrix(y_test, y_predict, color="Blues"):
+def plot_Confusion_Matrix(y_test:List[str], y_predict:List[str], color:str="Blues"):
     '''
     Task: Given a set of reference and predicted labels plot its confussion matrix
     
@@ -104,7 +89,12 @@ def plot_Confusion_Matrix(y_test, y_predict, color="Blues"):
     plt.show()
 
 
-def plotPCA(x_train, x_test,y_test, langs):
+def computePCA(x_train:List[NDArray[np.float32]]) -> PCA:
+    pca = PCA(n_components=2)
+    pca.fit(toNumpyArray(x_train))
+    return pca
+
+def plotPCA(pca:PCA, x_test:List[NDArray[np.float32]], y_test:List[str], langs:Iterable[str]):
     '''
     Task: Given train features train a PCA dimensionality reduction
           (2 dimensions) and plot the test set according to its labels.
@@ -118,10 +108,7 @@ def plotPCA(x_train, x_test,y_test, langs):
             Plot PCA results by language
             
     '''
-    pca = PCA(n_components=2)
-    pca.fit(toNumpyArray(x_train))
     pca_test = pca.transform(toNumpyArray(x_test))
-    print('Variance explained by PCA:', pca.explained_variance_ratio_)
     y_test_list = np.asarray(y_test)
     for lang in langs:
         pca_x = np.asarray([i[0] for i in pca_test])[y_test_list == lang]

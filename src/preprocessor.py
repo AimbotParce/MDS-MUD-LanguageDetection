@@ -1,4 +1,5 @@
 import re
+from argparse import ArgumentParser
 from typing import Iterable
 
 import nltk
@@ -12,7 +13,6 @@ nltk.download("stopwords", quiet=True)
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
 nltk.download("wordnet", quiet=True)
-
 
 class Preprocessor(object):
     SYMBOLS_PATTERN = r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|]"
