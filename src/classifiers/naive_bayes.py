@@ -1,5 +1,4 @@
 from sklearn.naive_bayes import MultinomialNB
-
 from . import Classifier
 
 

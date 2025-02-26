@@ -123,7 +123,9 @@ if __name__ == "__main__":
     parser.add_argument("--report-file", help="CSV file to report the results to", type=Path, default=None)
     args = parser.parse_args()
 
-    python = Path(sys.executable).relative_to(Path(".").resolve())
+    python = Path(sys.executable)
+    #TODO: Windows shit maybe? marc decide if this needs removal or not 
+    #python = Path(sys.executable).relative_to(Path(".").resolve())
     langdetect = Path(__file__).parent.relative_to(Path(".").resolve()) / "src" / "langdetect.py"
 
     
@@ -138,7 +140,9 @@ if __name__ == "__main__":
 
     grid = GridSearch(cmd)
     grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "split-sentences",
-                                      "lower", "remove-stopwords", "lemmatize", "stemmatize"], iterate="permutations"))
+                                      "lower"], iterate="permutations"))
+    #grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "split-sentences",
+    #                                 "lower", "remove-stopwords", "lemmatize", "stemmatize"], iterate="permutations"))
     grid.add_dimension(KeyValueDimension("tokenizer", ["word", "char", "bigram"]))
     grid.add_dimension(KeyValueDimension("vectorizer", ["token-count"]))
     grid.add_dimension(KeyValueDimension("classifier", ["dt", "knn", "lda", "lr", "mlp", "nb", "rf", "svm"]))

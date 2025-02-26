@@ -18,34 +18,34 @@ class Classifier(ABC):
         pass
 
 
-from .decision_tree import DecisionTreeClassifier
+from .decision_tree import DecTreeClassifier
 from .knn import KNNClassifier
 from .lda import LDAClassifier
 from .logistic_regression import LogisticRegressionClassifier
-from .MLP import MLPClassifier
+from .MLP import NNClassifier
 from .naive_bayes import NaiveBayesClassifier
-from .random_forest import RandomForestClassifier
+from .random_forest import RdmForestClassifier
 from .svm import SVMClassifier
 
 __all__ = [
-    "DecisionTreeClassifier",
+    "DecTreeClassifier",
     "KNNClassifier",
     "LDAClassifier",
     "LogisticRegressionClassifier",
-    "MLPClassifier",
+    "NNClassifier",
     "NaiveBayesClassifier",
-    "RandomForestClassifier",
+    "RdmForestClassifier",
     "SVMClassifier",
 ]
 
 _MAP = {
-    "dt": DecisionTreeClassifier,
+    "dt": DecTreeClassifier,
     "knn": KNNClassifier,
     "lda": LDAClassifier,
     "lr": LogisticRegressionClassifier,
-    "mlp": MLPClassifier,
+    "mlp": NNClassifier,
     "nb": NaiveBayesClassifier,
-    "rf": RandomForestClassifier,
+    "rf": RdmForestClassifier,
     "svm": SVMClassifier,
 }
 
