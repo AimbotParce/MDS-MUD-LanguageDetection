@@ -1,5 +1,4 @@
 import re
-from argparse import ArgumentParser
 from typing import Iterable
 
 import nltk
@@ -13,6 +12,7 @@ nltk.download("stopwords", quiet=True)
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
 nltk.download("wordnet", quiet=True)
+
 
 class Preprocessor(object):
     SYMBOLS_PATTERN = r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|]"
@@ -38,7 +38,6 @@ class Preprocessor(object):
         self._stopword_lang = stopword_lang
         self._lemmatize = lemmatize
         self._stemmatize = stemmatize
-
 
         self.stop_words = set()
         if self._remove_stopwords:
@@ -80,7 +79,7 @@ class Preprocessor(object):
             x = map(self.remove_numbers_and_symbols, x)
 
         if self._split_sentences:  # Step 3: Perform sentence splitting (punkt)
-            _x = map(sent_tokenize, x) # Uses Punkt by default # TODO: Sentence tokenize is language-dependent!!!!!
+            _x = map(sent_tokenize, x)  # Uses Punkt by default # TODO: Sentence tokenize is language-dependent!!!!!
             x, y = self._flatten_sentences(_x, y)
 
         if self._lower:  # Step 5: Remove capitalization
@@ -102,8 +101,7 @@ class Preprocessor(object):
             x = map(" ".join, tokens)
 
         return list(x), list(y)
-    
-    
+
     @staticmethod
     def _flatten_sentences(sentences: list[list[str]], labels: list[str]) -> tuple[list[str], list[str]]:
         res_sentences = []
@@ -114,7 +112,6 @@ class Preprocessor(object):
                 res_labels.append(label)
         return res_sentences, res_labels
 
-
     @staticmethod
     def remove_urls(text: str) -> str:
         # Matches HTTP(S) and WWW URLs
@@ -123,7 +120,6 @@ class Preprocessor(object):
     @staticmethod
     def remove_numbers_and_symbols(text: str) -> str:
         return re.sub(Preprocessor.SYMBOLS_PATTERN, "", text)
-
 
     def remove_stop_words(self, tokens: Iterable[str]) -> list[str]:
         return list(filter(lambda token: token not in self.stop_words, tokens))
@@ -137,8 +133,8 @@ class Preprocessor(object):
     def stem(tokens: Iterable[str]) -> list[str]:
         stemmer = PorterStemmer()
         return list(map(stemmer.stem, tokens))
-    
-    
+
+
 if __name__ == "__main__":
     # Benchmark
     import timeit
@@ -147,9 +143,16 @@ if __name__ == "__main__":
     import pandas as pd
 
     raw = pd.read_csv(Path(__file__).parent.parent / "data" / "dataset.csv")
-    preprocessor = Preprocessor(remove_urls=True, remove_symbols=True, split_sentences=True,
-                       lower=True, remove_stopwords=True, lemmatize=True, stemmatize=True)
+    preprocessor = Preprocessor(
+        remove_urls=True,
+        remove_symbols=True,
+        split_sentences=True,
+        lower=True,
+        remove_stopwords=True,
+        lemmatize=True,
+        stemmatize=True,
+    )
 
     ATTEMPTS = 8
-    time = timeit.timeit(lambda: preprocessor.apply(raw['Text'], raw['language']), number=ATTEMPTS)
-    print("Done in", time/ATTEMPTS, "seconds per execution on average.")
+    time = timeit.timeit(lambda: preprocessor.apply(raw["Text"], raw["language"]), number=ATTEMPTS)
+    print("Done in", time / ATTEMPTS, "seconds per execution on average.")
