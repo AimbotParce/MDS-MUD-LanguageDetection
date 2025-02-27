@@ -52,8 +52,6 @@ def get_parser():
 
 
 if __name__ == "__main__":
-    import time
-
     start = time.time()
     parser = get_parser()
     args = parser.parse_args()
