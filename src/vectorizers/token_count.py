@@ -26,10 +26,10 @@ class TokenCountVectorizer(Vectorizer):
         self._vectorizer.fit(data)
 
     def transform(self, data: Iterable[List[str]]) -> List[NDArray[np.float32]]:
-        return self._vectorizer.transform(data)
+        return np.asarray(self._vectorizer.transform(data).todense(), dtype=np.float32)
 
     def fit_transform(self, data: Iterable[List[str]]) -> List[NDArray[np.float32]]:
-        return self._vectorizer.fit_transform(data)
+        return np.asarray(self._vectorizer.fit_transform(data).todense(), dtype=np.float32)
 
     def get_vocab(self) -> List[str]:
         return self._vectorizer.get_feature_names_out()
