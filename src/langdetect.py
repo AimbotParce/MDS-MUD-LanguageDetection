@@ -178,8 +178,8 @@ if __name__ == "__main__":
         with open(REPORT_RESULTS, "a") as f:
             f.write(
                 f'"{INPUT}",{VOC_SIZE},"{TOKENIZER}","{VECTORIZER}","{CLASSIFIER}",{REMOVE_URLS},{REMOVE_SYMBOLS},'
-                f"{SPLIT_SENTENCES},{LOWER},{LEMMATIZE},{STEMMATIZE},{len(X_train)},"
-                f"{len(X_test)},{len(vocab)},{train_coverage},{test_coverage},{float(f1_micro)},{float(f1_macro)},{float(f1_weighted)},"
+                f"{SPLIT_SENTENCES},{LOWER},{LEMMATIZE},{STEMMATIZE},{len(X_train_pre)},"
+                f"{len(X_test_pre)},{len(vocab)},{train_coverage},{test_coverage},{float(f1_micro)},{float(f1_macro)},{float(f1_weighted)},"
                 f"{float(pca.explained_variance_ratio_[0])},{time.time()-start}\n"
             )
 
