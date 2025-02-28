@@ -12,7 +12,8 @@ import classifiers
 import preprocessor
 import tokenizers
 import vectorizers
-from utils import compute_coverage, computePCA, normalizeData, plot_Confusion_Matrix, plotPCA
+from utils import (compute_coverage, computePCA, normalizeData,
+                   plot_Confusion_Matrix, plotPCA)
 
 seed = 42
 random.seed(seed)
@@ -45,7 +46,6 @@ def get_parser():
     parser.add_argument("--remove-symbols", help="Remove Symbols", action="store_true")
     parser.add_argument("--split-sentences", help="Split Sentences", action="store_true")
     parser.add_argument("--lower", help="Lowercase", action="store_true")
-    parser.add_argument("--remove-stopwords", help="Remove Stopwords", action="store_true")
     parser.add_argument("--lemmatize", help="Lemmatize", action="store_true")
     parser.add_argument("--stemmatize", help="Stemmatize", action="store_true")
     return parser
@@ -69,7 +69,6 @@ if __name__ == "__main__":
     REMOVE_SYMBOLS: bool = args.remove_symbols
     SPLIT_SENTENCES: bool = args.split_sentences
     LOWER: bool = args.lower
-    REMOVE_STOPWORDS: bool = args.remove_stopwords
     LEMMATIZE: bool = args.lemmatize
     STEMMATIZE: bool = args.stemmatize
 
@@ -86,7 +85,6 @@ if __name__ == "__main__":
     print("Remove Symbols:", REMOVE_SYMBOLS)
     print("Split Sentences:", SPLIT_SENTENCES)
     print("Lowercase:", LOWER)
-    print("Remove Stopwords:", REMOVE_STOPWORDS)
     print("Lemmatize:", LEMMATIZE)
     print("Stemmatize:", STEMMATIZE)
     print("========")
@@ -118,7 +116,6 @@ if __name__ == "__main__":
         remove_symbols=REMOVE_SYMBOLS,
         split_sentences=SPLIT_SENTENCES,
         lower=LOWER,
-        remove_stopwords=REMOVE_STOPWORDS,
         lemmatize=LEMMATIZE,
         stemmatize=STEMMATIZE,
     )
@@ -181,7 +178,7 @@ if __name__ == "__main__":
         with open(REPORT_RESULTS, "a") as f:
             f.write(
                 f'"{INPUT}",{VOC_SIZE},"{TOKENIZER}","{VECTORIZER}","{CLASSIFIER}",{REMOVE_URLS},{REMOVE_SYMBOLS},'
-                f"{SPLIT_SENTENCES},{LOWER},{REMOVE_STOPWORDS},{LEMMATIZE},{STEMMATIZE},{len(X_train)},"
+                f"{SPLIT_SENTENCES},{LOWER},{LEMMATIZE},{STEMMATIZE},{len(X_train)},"
                 f"{len(X_test)},{len(vocab)},{train_coverage},{test_coverage},{float(f1_micro)},{float(f1_macro)},{float(f1_weighted)},"
                 f"{float(pca.explained_variance_ratio_[0])},{time.time()-start}\n"
             )

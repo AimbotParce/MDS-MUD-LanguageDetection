@@ -132,7 +132,7 @@ if __name__ == "__main__":
     if args.report_file:
         with open(args.report_file, "w") as f:
             f.write("dataset,max_voc_size,tokenizer,vectorizer,classifier,remove_urls,remove_symbols,split_sentences,lower,"
-                    "remove_stopwords,lemmatize,stemmatize,train_size,test_size,voc_size,train_coverage,test_coverage,"
+                    "lemmatize,stemmatize,train_size,test_size,voc_size,train_coverage,test_coverage,"
                     "f1_micro,f1_macro,f1_weighted,pca_explained_variance_ratio,duration\n")
         cmd = f'"{python}" "{langdetect}" --report-results "{args.report_file}" --hide-plots'
     else:
