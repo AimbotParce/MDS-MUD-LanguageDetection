@@ -143,7 +143,7 @@ if __name__ == "__main__":
                                       "lower"], iterate="permutations"))
     #grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "split-sentences",
     #                                 "lower", "remove-stopwords", "lemmatize", "stemmatize"], iterate="permutations"))
-    grid.add_dimension(KeyValueDimension("tokenizer", ["word", "char", "bigram"]))
+    grid.add_dimension(KeyValueDimension("tokenizer", ["word", "char", "bigram", "short-word"]))
     grid.add_dimension(KeyValueDimension("vectorizer", ["token-count"]))
     grid.add_dimension(KeyValueDimension("classifier", ["dt", "knn", "lda", "lr", "mlp", "nb", "rf", "svm"]))
 

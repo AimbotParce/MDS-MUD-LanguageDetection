@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable, List, Optional
-
-import numpy as np
-from numpy.typing import NDArray
+from typing import Iterable, List
 
 
 class Tokenizer(ABC):
@@ -24,14 +21,16 @@ class Tokenizer(ABC):
 
 from .bigram_tokenizer import BigramTokenizer
 from .char_tokenizer import CharTokenizer
+from .short_word_tokenizer import ShortWordTokenizer
 from .word_tokenizer import WordTokenizer
 
-__all__ = ["WordTokenizer", "CharTokenizer", "BigramTokenizer"]
+__all__ = ["WordTokenizer", "CharTokenizer", "BigramTokenizer", "ShortWordTokenizer"]
 
 _MAP = {
     "word": WordTokenizer,
     "char": CharTokenizer,
-    "bigram": BigramTokenizer
+    "bigram": BigramTokenizer,
+    "short-word": ShortWordTokenizer
 }
 
 options = list(_MAP.keys())
