@@ -4,7 +4,12 @@ from . import Tokenizer
 
 
 class BigramTokenizer(Tokenizer):
-    "Separates sentences into lists of tokens. Can be either a static tokenizer or a trainable one"
+    """
+    Given a sentence, it returns a list of all the pairs of letters that appear one after the other.
+    Keep in mind that the count of bigrams is always one less than the count of characters in a sentence.
+    This tokenizer does not remove whitespaces, as they may be important (some languages might have different
+    probabilities for words starting or ending in some letters).
+    """
     def __init__(self):
         pass
 

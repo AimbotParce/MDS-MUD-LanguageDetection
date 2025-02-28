@@ -1,12 +1,10 @@
 from typing import Iterable, List
 
-from nltk.tokenize import word_tokenize
-
 from . import Tokenizer
 
 
 class WordTokenizer(Tokenizer):
-    "Separates sentences into lists of tokens. Can be either a static tokenizer or a trainable one"
+    "Separates the sentences into lists of words, using whitespaces as separators"
     def __init__(self):
         pass
 
@@ -14,7 +12,7 @@ class WordTokenizer(Tokenizer):
         pass
 
     def transform(self, data: Iterable[str]) -> List[List[str]]:
-        return list(map(word_tokenize, data)) # TODO: Word tokenizer is language-dependent!!!!!!
+        return list(map(str.split, data)) # Word tokenizer from nltk is language-dependent. Cannot use it here.
 
     def fit_transform(self, data: Iterable[str]) -> List[List[str]]:
         return self.transform(data)

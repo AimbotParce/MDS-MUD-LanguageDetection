@@ -1,39 +1,35 @@
-import json
-from collections import defaultdict
-from typing import Dict, Iterable, List, Optional
+
+from typing import Iterable, List, Optional
 
 import numpy as np
 from numpy.typing import NDArray
+from sklearn.feature_extraction.text import CountVectorizer
 
 from . import Vectorizer
 
 
 class TokenCountVectorizer(Vectorizer):
-    "Counts the number of occurrences of each token in the vocabulary"
+    """
+    Counts the number of occurrences of each token in the vocabulary.
+    This is a generalization of the sklearn CountVectorizer.
+    """
 
     def __init__(self, max_features: Optional[int] = None):
         super().__init__(max_features)
-        self._token_counts: Dict[str, int] = defaultdict(int)
-        self._all_tokens: set[str] = set()
-        self._vocab:list[str] = None
+        self._vectorizer = CountVectorizer(analyzer=lambda x:x, max_features=max_features)
+        # If analyzer is a function, CountVectorizer will actually not split the data into tokens itself, 
+        # buf it will use said function to split them. Given that we decided to perform these two steps separately,
+        # we will use a lambda function that returns the input as is, so that the data is not split further than
+        # it already is.
 
     def fit(self, data: Iterable[List[str]]) -> None:
-        for sentence in data:
-            for token in sentence:
-                self._token_counts[token] += 1
-                self._all_tokens.add(token)
-        self._vocab = sorted(self._all_tokens, key=lambda x: self._token_counts[x], reverse=True)[:self.max_features]
+        self._vectorizer.fit(data)
 
     def transform(self, data: Iterable[List[str]]) -> List[NDArray[np.float32]]:
-        if self._vocab is None:
-            raise ValueError("Vectorizer not fitted")
-        return [np.array([sentence.count(token) for token in self._vocab], dtype=np.float32) for sentence in data]
+        return self._vectorizer.transform(data)
 
     def fit_transform(self, data: Iterable[List[str]]) -> List[NDArray[np.float32]]:
-        self.fit(data)
-        return self.transform(data)
+        return self._vectorizer.fit_transform(data)
 
     def get_vocab(self) -> List[str]:
-        if self._vocab is None:
-            raise ValueError("Vectorizer not fitted")
-        return self._vocab
+        return self._vectorizer.get_feature_names_out()

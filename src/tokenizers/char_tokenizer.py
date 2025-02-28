@@ -4,7 +4,7 @@ from . import Tokenizer
 
 
 class CharTokenizer(Tokenizer):
-    "Separates sentences into lists of tokens. Can be either a static tokenizer or a trainable one"
+    "Separates the sentences into lists of characters, ignoring whitespaces"
     def __init__(self):
         pass
 
@@ -12,7 +12,7 @@ class CharTokenizer(Tokenizer):
         pass
 
     def transform(self, data: Iterable[str]) -> List[List[str]]:
-        return data
+        return list(map(lambda x: x.replace(" ", ""), data))
 
     def fit_transform(self, data: Iterable[str]) -> List[List[str]]:
         return self.transform(data)

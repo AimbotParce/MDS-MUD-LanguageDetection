@@ -15,7 +15,7 @@ nltk.download("wordnet", quiet=True)
 
 
 class Preprocessor(object):
-    SYMBOLS_PATTERN = r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|]"
+    SYMBOLS_PATTERN = r"[\d,:;\"'(){}\[\]<>$€¥@#%^&*+=|\-\?]"
     URLS_PATTERN = r"https?://[a-zA-Z0-9.-]+(?:/[^\s]*)?|www\.[a-zA-Z0-9.-]+(?:/[^\s]*)?"
 
     def __init__(
