@@ -51,45 +51,62 @@ ggsave("plots/f1_weighted_tokenizer_classifier.png")
 
 shapiro.test(df$f1_weighted)
 
+
+
+png(filename = "plots/f1_weighted_vs_diacritics_removal.png", width = 800, height = 600, res = 100)
 boxplot(f1_weighted ~ remove_diacritics,
     data = df,
     main = "F1 Weighted by Diacritics Removal",
     ylab = "F1 Weighted",
+    xlab = "Remove Diacritics",
     col = c("skyblue", "lightgreen")
 )
+dev.off()
 wilcox.test(f1_weighted ~ remove_diacritics, data = df)
 
+png(filename = "plots/f1_weighted_vs_url_removal.png", width = 800, height = 600, res = 100)
 boxplot(f1_weighted ~ remove_urls,
     data = df,
     main = "F1 Weighted by URL Removal",
     ylab = "F1 Weighted",
+    xlab = "Remove URLs",
     col = c("salmon", "lightyellow")
 )
+dev.off()
 wilcox.test(f1_weighted ~ remove_urls, data = df)
 
+png(filename = "plots/f1_weighted_vs_symbols_removal.png", width = 800, height = 600, res = 100)
 boxplot(f1_weighted ~ remove_symbols,
     data = df,
     main = "F1 Weighted by Symbols Removal",
     ylab = "F1 Weighted",
+    xlab = "Remove Symbols",
     col = c("lightblue", "lavender")
 )
+dev.off()
 wilcox.test(f1_weighted ~ remove_symbols, data = df)
 
 
+png(filename = "plots/f1_weighted_vs_sentence_splitting.png", width = 800, height = 600, res = 100)
 boxplot(f1_weighted ~ split_sentences,
     data = df,
     main = "F1 Weighted by Sentence Splitting",
     ylab = "F1 Weighted",
+    xlab = "Split Sentences",
     col = c("lightgreen", "lightpink")
 )
+dev.off()
 wilcox.test(f1_weighted ~ split_sentences, data = df)
 
+png(filename = "plots/f1_weighted_vs_lowercase.png", width = 800, height = 600, res = 100)
 boxplot(f1_weighted ~ lower,
     data = df,
     main = "F1 Weighted by Lowercasing",
     ylab = "F1 Weighted",
+    xlab = "Lowercase",
     col = c("lightcoral", "lightblue")
 )
+dev.off()
 wilcox.test(f1_weighted ~ lower, data = df)
 
 boxplot(f1_weighted ~ classifier,
