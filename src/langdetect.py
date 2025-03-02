@@ -30,7 +30,7 @@ def get_parser():
         type=Path,
         default=Path(__file__).parent.parent / "data" / "dataset.csv",
     )
-    parser.add_argument("-v", "--voc_size", help="Vocabulary size", type=int, default=2000)
+    parser.add_argument("-v", "--voc-size", help="Vocabulary size", type=int, default=2000)
     parser.add_argument(
         "-t", "--tokenizer", help="Kind of tokenizer to use", choices=tokenizers.options, default="char"
     )

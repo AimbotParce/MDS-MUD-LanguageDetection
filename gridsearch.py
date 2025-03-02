@@ -124,8 +124,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     python = Path(sys.executable)
-    #TODO: Windows shit maybe? marc decide if this needs removal or not 
-    #python = Path(sys.executable).relative_to(Path(".").resolve())
+    # Check if python is child of current directory
+    if Path(".").resolve() in map(Path.resolve, python.parents):
+        # Shorten the path to python
+        python = Path(sys.executable).relative_to(Path(".").resolve())
     langdetect = Path(__file__).parent.relative_to(Path(".").resolve()) / "src" / "langdetect.py"
 
     
@@ -139,13 +141,11 @@ if __name__ == "__main__":
         cmd = f'"{python}" "{langdetect}" --hide-plots'
 
     grid = GridSearch(cmd)
-    grid.add_dimension(FlagDimension(["remove-diacritics", "remove-urls", "remove-symbols", "split-sentences",
-                                      "lower"], iterate="permutations"))
-    #grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "split-sentences",
-    #                                 "lower", "remove-stopwords", "lemmatize", "stemmatize"], iterate="permutations"))
-    grid.add_dimension(KeyValueDimension("tokenizer", ["word", "char", "bigram", "short-word"]))
+    grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "lower"], iterate="permutations"))
+    grid.add_dimension(KeyValueDimension("tokenizer", ["bigram", "short-word"]))
     grid.add_dimension(KeyValueDimension("vectorizer", ["token-count"]))
-    grid.add_dimension(KeyValueDimension("classifier", ["dt", "knn", "lda", "lr", "mlp", "nb", "rf", "svm"]))
+    grid.add_dimension(KeyValueDimension("classifier", ["mlp", "rf"]))
+    grid.add_dimension(KeyValueDimension("voc-size", ["500", "1000", "1500", "2000", "2500", "3000", "4000", "5000"]))
 
 
     print("Total number of executions to run:", len(grid))
