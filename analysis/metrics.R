@@ -1,6 +1,8 @@
 library(readr)
 library(FactoMineR)
 library(mice)
+library(ggplot2)
+library(dplyr)
 
 raw <- read.csv("data/reports.csv")
 summary(raw)
@@ -27,44 +29,21 @@ df <- raw[, -which(names(raw) %in% c("dataset", "vectorizer", "lemmatize", "stem
 summary(df)
 condes(df, num.var = which(names(df) == "f1_weighted"))
 
-# Coverage as a function of tokenization
 plot(df$test_coverage ~ df$tokenizer)
-
-
-#F1 score as a function of test / tokenization / classifier 
 plot(df$f1_weighted ~ df$test_coverage)
 plot(df$f1_weighted ~ df$tokenizer)
 plot(df$f1_weighted ~ df$classifier)
 
 
-# combined factor levels (tokenizer + classifier)
-df <- df %>%
-  mutate(group = interaction(tokenizer, classifier))
-df <- df %>%
-  mutate(group = reorder(group, as.numeric(tokenizer)))
+dfs <- df %>%
+    arrange(tokenizer, classifier) %>%
+    mutate(Combined = factor(paste(tokenizer, classifier, sep = " - "), levels = unique(paste(tokenizer, classifier, sep = " - "))))
 
-
-# Plot F1 as a function of tokenizer + classifier
-boxplot(f1_weighted ~ group, 
-        data = df, 
-        las = 2,                         # Rotate x-axis labels
-        cex.axis = 0.7,
-        main = "F1 Weighted by Tokenizer and Classifier",
-        xlab = "Tokenizer + Classifier", 
-        ylab = "F1 Weighted",
-        col = rainbow(length(unique(df$group)))
- )
-
-
-# Group by tokenization method
-tokenizer_colors <- rainbow(length(unique(df$tokenizer)))
-df$group_color <- tokenizer_colors[as.factor(df$tokenizer)]
-boxplot(f1_weighted ~ group, 
-        data = df, 
-        las = 2,                         # Rotate x-axis labels
-        cex.axis = 0.7,
-        main = "F1 Weighted by Tokenizer and Classifier",
-        xlab = "Tokenizer + Classifier", 
-        ylab = "F1 Weighted",
-        col = df$group_color  # Color based on tokenizer
-)
+# Boxplot f1_weighted vs tokenizer and classifier
+ggplot(dfs, aes(x = interaction(tokenizer, classifier, sep = " - "), y = f1_weighted, fill = classifier)) +
+    geom_boxplot() +
+    labs(x = "Tokenizer - Classifier", y = "F1 Weighted", fill = "Classifier") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    scale_x_discrete(limits = unique(interaction(dfs$tokenizer, dfs$classifier, sep = " - ")))
+ggsave("plots/f1_weighted_tokenizer_classifier.png")
