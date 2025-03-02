@@ -47,3 +47,78 @@ ggplot(dfs, aes(x = interaction(tokenizer, classifier, sep = " - "), y = f1_weig
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     scale_x_discrete(limits = unique(interaction(dfs$tokenizer, dfs$classifier, sep = " - ")))
 ggsave("plots/f1_weighted_tokenizer_classifier.png")
+
+
+shapiro.test(df$f1_weighted)
+
+boxplot(f1_weighted ~ remove_diacritics,
+    data = df,
+    main = "F1 Weighted by Diacritics Removal",
+    ylab = "F1 Weighted",
+    col = c("skyblue", "lightgreen")
+)
+wilcox.test(f1_weighted ~ remove_diacritics, data = df)
+
+boxplot(f1_weighted ~ remove_urls,
+    data = df,
+    main = "F1 Weighted by URL Removal",
+    ylab = "F1 Weighted",
+    col = c("salmon", "lightyellow")
+)
+wilcox.test(f1_weighted ~ remove_urls, data = df)
+
+boxplot(f1_weighted ~ remove_symbols,
+    data = df,
+    main = "F1 Weighted by Symbols Removal",
+    ylab = "F1 Weighted",
+    col = c("lightblue", "lavender")
+)
+wilcox.test(f1_weighted ~ remove_symbols, data = df)
+
+
+boxplot(f1_weighted ~ split_sentences,
+    data = df,
+    main = "F1 Weighted by Sentence Splitting",
+    ylab = "F1 Weighted",
+    col = c("lightgreen", "lightpink")
+)
+wilcox.test(f1_weighted ~ split_sentences, data = df)
+
+boxplot(f1_weighted ~ lower,
+    data = df,
+    main = "F1 Weighted by Lowercasing",
+    ylab = "F1 Weighted",
+    col = c("lightcoral", "lightblue")
+)
+wilcox.test(f1_weighted ~ lower, data = df)
+
+boxplot(f1_weighted ~ classifier,
+    data = df,
+    main = "F1 Weighted by Classifier",
+    ylab = "F1 Weighted",
+    col = rainbow(length(unique(df$classifier)))
+)
+kruskal.test(f1_weighted ~ classifier, data = df)
+
+
+summary(df)
+model <- glm(f1_weighted ~ remove_diacritics + remove_urls + remove_symbols + split_sentences + lower, data = df)
+summary(model)
+
+# Find the best combination of parameters, based on the highest F1 Weighted
+best <- df[which.max(df$f1_weighted), ]
+best
+# Tokenizer: bigram
+# Classifier: mlp
+# Remove Diacritics: False
+# Remove URLs: True
+# Remove Symbols: False
+# Split Sentences: True
+# Lower: True
+# ---
+# Train Coverage: 0.8403668
+# Test Coverage: 0.8417647
+# F1 Micro: 0.9806818
+# F1 Macro: 0.9807996
+# F1 Weighted: 0.9808141
+# PCA Explained Variance Ratio: 0.1673027
