@@ -109,13 +109,30 @@ boxplot(f1_weighted ~ lower,
 dev.off()
 wilcox.test(f1_weighted ~ lower, data = df)
 
-boxplot(f1_weighted ~ classifier,
-    data = df,
+png(filename = "plots/f1_weighted_vs_classifier.png", width = 800, height = 600, res = 100)
+classifier <- factor(df$classifier,
+    levels = c("dt", "knn", "lda", "lr", "mlp", "nb", "rf", "svm"),
+    labels = c("DT", "KNN", "LDA", "LR", "MLP", "NB", "RF", "SVC")
+)
+boxplot(df$f1_weighted ~ classifier,
     main = "F1 Weighted by Classifier",
     ylab = "F1 Weighted",
-    col = rainbow(length(unique(df$classifier)))
+    xlab = "Classifier",
+    col = c("lightgreen", "lightpink", "lightblue", "lightcoral", "lightyellow", "lightcyan", "lightsalmon", "lightgray")
 )
+dev.off()
 kruskal.test(f1_weighted ~ classifier, data = df)
+
+png(filename = "plots/f1_weighted_vs_tokenizer.png", width = 800, height = 600, res = 100)
+tokenizers <- factor(df$tokenizer, levels = c("short-word", "bigram", "char", "word"), labels = c("Hybrid", "Bigram", "Unigram", "Word"))
+boxplot(df$f1_weighted ~ tokenizers,
+    main = "F1 Weighted by Tokenizer",
+    ylab = "F1 Weighted",
+    xlab = "Tokenizer",
+    col = c("lightgreen", "lightpink", "lightblue", "lightcoral")
+)
+dev.off()
+kruskal.test(f1_weighted ~ tokenizer, data = df)
 
 
 summary(df)
@@ -146,8 +163,19 @@ word_mlp <- df[df$tokenizer == "short-word" & df$classifier == "mlp", ]
 word_rf <- df[df$tokenizer == "short-word" & df$classifier == "rf", ]
 bigram_mlp <- df[df$tokenizer == "bigram" & df$classifier == "mlp", ]
 bigram_rf <- df[df$tokenizer == "bigram" & df$classifier == "rf", ]
+png(filename = "plots/duration_vs_vocabulary_size_granular.png", width = 800, height = 600, res = 100)
 plot(duration ~ voc_size, data = word_mlp, col = "red", ylim = c(0, 600), xlab = "Vocabulary Size", ylab = "Duration (s)")
 points(duration ~ voc_size, data = word_rf, col = "green")
 points(duration ~ voc_size, data = bigram_rf, col = "blue")
 points(duration ~ voc_size, data = bigram_mlp, col = "purple")
 legend(500, 600, legend = c("MLP - Short-Word", "MLP - Bigram", "RF - Short-Word", "RF - Bigram"), col = c("red", "purple", "green", "blue"), lty = 1)
+dev.off()
+
+
+mlp <- df[df$classifier == "mlp", ]
+rf <- df[df$classifier == "rf", ]
+png(filename = "plots/duration_vs_vocabulary_size.png", width = 800, height = 600, res = 100)
+plot(duration ~ voc_size, data = mlp, col = "red", ylim = c(0, 600), xlab = "Vocabulary Size", ylab = "Duration (s)")
+points(duration ~ voc_size, data = rf, col = "blue")
+legend(500, 600, legend = c("MLP", "RF"), col = c("red", "blue"), lty = 1)
+dev.off()
