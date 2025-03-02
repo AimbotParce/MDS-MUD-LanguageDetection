@@ -42,6 +42,7 @@ def get_parser():
     )
 
     # Preprocessing options
+    parser.add_argument("--remove-diacritics", help="Remove Diacritics", action="store_true")
     parser.add_argument("--remove-urls", help="Remove URLs", action="store_true")
     parser.add_argument("--remove-symbols", help="Remove Symbols", action="store_true")
     parser.add_argument("--split-sentences", help="Split Sentences", action="store_true")
@@ -65,6 +66,7 @@ if __name__ == "__main__":
     REPORT_RESULTS: Optional[Path] = args.report_results
 
     # Preprocessing options
+    REMOVE_DIACRITICS: bool = args.remove_diacritics
     REMOVE_URLS: bool = args.remove_urls
     REMOVE_SYMBOLS: bool = args.remove_symbols
     SPLIT_SENTENCES: bool = args.split_sentences
@@ -81,6 +83,7 @@ if __name__ == "__main__":
     print("Classifier:", CLASSIFIER)
 
     print("Preprocessing options:")
+    print("Remove Diacritics:", REMOVE_DIACRITICS)
     print("Remove URLs:", REMOVE_URLS)
     print("Remove Symbols:", REMOVE_SYMBOLS)
     print("Split Sentences:", SPLIT_SENTENCES)
@@ -112,6 +115,7 @@ if __name__ == "__main__":
     start = time.time()
     print("Preprocessing text...", end=" ", flush=True)
     preprocessor = preprocessor.Preprocessor(
+        remove_diacritics=REMOVE_DIACRITICS,
         remove_urls=REMOVE_URLS,
         remove_symbols=REMOVE_SYMBOLS,
         split_sentences=SPLIT_SENTENCES,
@@ -177,7 +181,7 @@ if __name__ == "__main__":
         print("Writing results to", REPORT_RESULTS)
         with open(REPORT_RESULTS, "a") as f:
             f.write(
-                f'"{INPUT}",{VOC_SIZE},"{TOKENIZER}","{VECTORIZER}","{CLASSIFIER}",{REMOVE_URLS},{REMOVE_SYMBOLS},'
+                f'"{INPUT}",{VOC_SIZE},"{TOKENIZER}","{VECTORIZER}","{CLASSIFIER}",{REMOVE_DIACRITICS},{REMOVE_URLS},{REMOVE_SYMBOLS},'
                 f"{SPLIT_SENTENCES},{LOWER},{LEMMATIZE},{STEMMATIZE},{len(X_train_pre)},"
                 f"{len(X_test_pre)},{len(vocab)},{train_coverage},{test_coverage},{float(f1_micro)},{float(f1_macro)},{float(f1_weighted)},"
                 f"{float(pca.explained_variance_ratio_[0])},{time.time()-start}\n"

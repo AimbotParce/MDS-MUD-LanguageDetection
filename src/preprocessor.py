@@ -1,4 +1,5 @@
 import re
+import unicodedata
 from typing import Iterable
 
 import nltk
@@ -15,6 +16,7 @@ class Preprocessor(object):
 
     def __init__(
         self,
+        remove_diacritics: bool = False,
         remove_urls: bool = False,
         remove_symbols: bool = False,
         split_sentences: bool = False,
@@ -22,6 +24,7 @@ class Preprocessor(object):
         lemmatize: bool = False,
         stemmatize: bool = False,
     ):
+        self._remove_diacritics = remove_diacritics
         self._remove_urls = remove_urls
         self._remove_symbols = remove_symbols
         self._split_sentences = split_sentences
@@ -68,7 +71,10 @@ class Preprocessor(object):
         if self._remove_symbols:  # Step 2: Perform Number Regex matching removal
             x = map(self.remove_numbers_and_symbols, x)
 
-        if self._split_sentences:  # Step 3: Perform sentence splitting
+        if self._remove_diacritics:  # Step 3: Remove diacritics
+            x = map(self.remove_diacritics, x)
+
+        if self._split_sentences:  # Step 4: Perform sentence splitting
             _x = map(self.split_sentences, x)
             x, y = self._flatten_sentences(_x, y)
 
@@ -113,6 +119,12 @@ class Preprocessor(object):
     def remove_urls(text: str) -> str:
         # Matches HTTP(S) and WWW URLs
         return re.sub(Preprocessor.URLS_PATTERN, "", text)
+
+    @staticmethod
+    def remove_diacritics(text: str) -> str:
+        # https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-normalize-in-a-python-unicode-string
+        nfkd_form = unicodedata.normalize("NFKD", text)
+        return "".join([c for c in nfkd_form if not unicodedata.combining(c)])
 
     @staticmethod
     def remove_numbers_and_symbols(text: str) -> str:
