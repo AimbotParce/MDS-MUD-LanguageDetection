@@ -122,3 +122,15 @@ best
 # F1 Macro: 0.9807996
 # F1 Weighted: 0.9808141
 # PCA Explained Variance Ratio: 0.1673027
+
+
+# Durations. We only have durations for the last runs, because we found an error on the estimation of the duration.
+word_mlp <- df[df$tokenizer == "short-word" & df$classifier == "mlp", ]
+word_rf <- df[df$tokenizer == "short-word" & df$classifier == "rf", ]
+bigram_mlp <- df[df$tokenizer == "bigram" & df$classifier == "mlp", ]
+bigram_rf <- df[df$tokenizer == "bigram" & df$classifier == "rf", ]
+plot(duration ~ voc_size, data = word_mlp, col = "red", ylim = c(0, 600), xlab = "Vocabulary Size", ylab = "Duration (s)")
+points(duration ~ voc_size, data = word_rf, col = "green")
+points(duration ~ voc_size, data = bigram_rf, col = "blue")
+points(duration ~ voc_size, data = bigram_mlp, col = "purple")
+legend(500, 600, legend = c("MLP - Short-Word", "MLP - Bigram", "RF - Short-Word", "RF - Bigram"), col = c("red", "purple", "green", "blue"), lty = 1)
