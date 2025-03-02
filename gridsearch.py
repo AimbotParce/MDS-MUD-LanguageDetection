@@ -131,7 +131,7 @@ if __name__ == "__main__":
     
     if args.report_file:
         with open(args.report_file, "w") as f:
-            f.write("dataset,max_voc_size,tokenizer,vectorizer,classifier,remove_urls,remove_symbols,split_sentences,lower,"
+            f.write("dataset,max_voc_size,tokenizer,vectorizer,classifier,remove_diacritics,remove_urls,remove_symbols,split_sentences,lower,"
                     "lemmatize,stemmatize,train_size,test_size,voc_size,train_coverage,test_coverage,"
                     "f1_micro,f1_macro,f1_weighted,pca_explained_variance_ratio,duration\n")
         cmd = f'"{python}" "{langdetect}" --report-results "{args.report_file}" --hide-plots'
@@ -139,7 +139,7 @@ if __name__ == "__main__":
         cmd = f'"{python}" "{langdetect}" --hide-plots'
 
     grid = GridSearch(cmd)
-    grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "split-sentences",
+    grid.add_dimension(FlagDimension(["remove-diacritics", "remove-urls", "remove-symbols", "split-sentences",
                                       "lower"], iterate="permutations"))
     #grid.add_dimension(FlagDimension(["remove-urls", "remove-symbols", "split-sentences",
     #                                 "lower", "remove-stopwords", "lemmatize", "stemmatize"], iterate="permutations"))
