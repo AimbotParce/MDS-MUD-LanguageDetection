@@ -140,8 +140,9 @@ model <- glm(f1_weighted ~ remove_diacritics + remove_urls + remove_symbols + sp
 summary(model)
 
 # Find the best combination of parameters, based on the highest F1 Weighted
-best <- df[which.max(df$f1_weighted), ]
-best
+df_2000 <- df[df$voc_size == 2000, ]
+best_2000 <- df_2000[which.max(df_2000$f1_weighted), ]
+best_2000
 # Tokenizer: bigram
 # Classifier: mlp
 # Remove Diacritics: False
@@ -157,6 +158,22 @@ best
 # F1 Weighted: 0.9808141
 # PCA Explained Variance Ratio: 0.1673027
 
+best <- df[which.max(df$f1_weighted), ]
+best
+# Tokenizer: bigram
+# Classifier: mlp
+# Remove Diacritics: False
+# Remove URLs: False
+# Remove Symbols: False
+# Split Sentences: False
+# Lower: False
+# ---
+# Train Coverage: 0.9158911
+# Test Coverage: 0.9173231
+# F1 Micro: 0.9811364
+# F1 Macro: 0.9812277
+# F1 Weighted: 0.9812625
+# PCA Explained Variance Ratio: 0.1613334
 
 # Durations. We only have durations for the last runs, because we found an error on the estimation of the duration.
 word_mlp <- df[df$tokenizer == "short-word" & df$classifier == "mlp", ]
